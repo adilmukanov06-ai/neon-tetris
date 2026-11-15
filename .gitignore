@@ -1,0 +1,14 @@
+node_modules/
+.vercel/
+dist/
+build/
+captures/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.env
+.env.local
+.idea/
+.vscode/
+coverage/

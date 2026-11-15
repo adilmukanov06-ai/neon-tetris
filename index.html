@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#07070f" />
+<meta name="description" content="Неоновый тетрис в браузере. Играй прямо на странице — клавиатура или тач-экран." />
+<title>NEON TETRIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230a0a18'/><rect x='18' y='18' width='30' height='30' rx='5' fill='%23a855f7'/><rect x='52' y='18' width='30' height='30' rx='5' fill='%2322d3ee'/><rect x='18' y='52' width='30' height='30' rx='5' fill='%2322c55e'/><rect x='52' y='52' width='30' height='30' rx='5' fill='%23f59e0b'/></svg>" />
+<link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <h1 class="logo">NEON<span>TETRIS</span></h1>
+    <p class="tagline">собирай линии&nbsp;• ломай рекорды</p>
+  </header>
+
+  <main class="layout">
+    <!-- ЛЕВАЯ КОЛОНКА -->
+    <aside class="panel panel--left">
+      <div class="stats">
+        <div class="stat">
+          <span class="stat__label">Счёт</span>
+          <span class="stat__value stat__value--score" id="score">0</span>
+        </div>
+        <div class="stat stat--row">
+          <div class="stat__cell">
+            <span class="stat__label">Уровень</span>
+            <span class="stat__value" id="level">1</span>
+          </div>
+          <div class="stat__cell">
+            <span class="stat__label">Линии</span>
+            <span class="stat__value" id="lines">0</span>
+          </div>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Рекорд</span>
+          <span class="stat__value stat__value--record" id="best">0</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <span class="box__label">Запас <kbd>C</kbd></span>
+        <canvas id="hold" class="minicanvas" width="132" height="100" aria-label="Отложенная фигура"></canvas>
+      </div>
+
+      <div class="box box--stats">
+        <span class="box__label">Статистика</span>
+        <ul class="minilist">
+          <li><span>Тетрис</span><b id="statTetris">0</b></li>
+          <li><span>Максимум</span><b id="statMax">0</b></li>
+          <li><span>Серия</span><b id="statCombo">0</b></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- ИГРОВОЕ ПОЛЕ -->
+    <section class="stage">
+      <div class="stage__frame">
+        <canvas id="game" aria-label="Игровое поле тетриса"></canvas>
+
+        <div class="overlay is-visible" id="overlay">
+          <div class="overlay__card">
+            <h2 class="overlay__title" id="overlayTitle">NEON TETRIS</h2>
+            <p class="overlay__text" id="overlayText">
+              Складывай фигуры, заполняй линии, ставь рекорд.<br />
+              Управление — стрелки, <kbd>Space</kbd> — сброс.
+            </p>
+            <button class="btn btn--primary" id="startBtn" type="button">ИГРАТЬ</button>
+            <p class="overlay__hint">или нажми <kbd>Enter</kbd></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ПРАВАЯ КОЛОНКА -->
+    <aside class="panel panel--right">
+      <div class="box">
+        <span class="box__label">Дальше</span>
+        <canvas id="next" class="minicanvas minicanvas--tall" width="132" height="330" aria-label="Очередь фигур"></canvas>
+      </div>
+
+      <div class="box box--controls">
+        <span class="box__label">Управление</span>
+        <ul class="keys">
+          <li><span>Сдвиг</span><b><kbd>←</kbd><kbd>→</kbd></b></li>
+          <li><span>Поворот</span><b><kbd>↑</kbd><kbd>Z</kbd></b></li>
+          <li><span>Сброс</span><b><kbd>Space</kbd></b></li>
+          <li><span>Мягко</span><b><kbd>↓</kbd></b></li>
+          <li><span>Запас</span><b><kbd>C</kbd></b></li>
+          <li><span>Пауза</span><b><kbd>P</kbd></b></li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ТАЧ-УПРАВЛЕНИЕ -->
+  <div class="touch" id="touch" aria-hidden="true">
+    <div class="touch__pad">
+      <button class="tbtn" data-act="left" type="button" aria-label="Влево">◀</button>
+      <button class="tbtn" data-act="right" type="button" aria-label="Вправо">▶</button>
+    </div>
+    <div class="touch__pad">
+      <button class="tbtn" data-act="rotate" type="button" aria-label="Поворот">⟳</button>
+      <button class="tbtn" data-act="hold" type="button" aria-label="Запас">HOLD</button>
+      <button class="tbtn tbtn--wide" data-act="down" type="button" aria-label="Вниз">▼</button>
+      <button class="tbtn tbtn--drop" data-act="drop" type="button" aria-label="Сбросить">DROP</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>сделано на чистом JavaScript</span>
+    <span class="footer__dot">•</span>
+    <span>деплой на Vercel</span>
+  </footer>
+</div>
+
+<script type="module" src="./src/js/main.js"></script>
+</body>
+</html>

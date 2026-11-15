@@ -1,0 +1,23 @@
+{
+  "name": "neon-tetris",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Modern neon Tetris in vanilla JS. Zero dependencies, static hosting ready (Vercel).",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test tests/"
+  },
+  "keywords": [
+    "tetris",
+    "game",
+    "canvas",
+    "vanilla-js",
+    "vercel"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
