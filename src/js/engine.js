@@ -98,7 +98,8 @@ export class Tetris {
   /* ------------------------------------------------------------------ */
 
   emit(type, payload = {}) {
-    this.events.push({ type, ...payload });
+    // type всегда побеждает: payload не может переопределить имя события
+    this.events.push({ ...payload, type });
   }
 
   drainEvents() {
@@ -136,7 +137,7 @@ export class Tetris {
       this.emit('gameover', { score: this.score, lines: this.lines });
       return false;
     }
-    this.emit('spawn', { type: nextType });
+    this.emit('spawn', { piece: nextType });
     return true;
   }
 
@@ -257,7 +258,7 @@ export class Tetris {
       this.spawn();
     }
     this.holdUsed = true;
-    this.emit('hold', { type: this.hold });
+    this.emit('hold', { piece: this.hold });
     return true;
   }
 

@@ -151,10 +151,8 @@ function updateHud(force = false) {
 
 let lastTime = performance.now();
 
-function frame(now) {
-  const dt = Math.min(0.05, (now - lastTime) / 1000);
-  lastTime = now;
-
+/** Один шаг игры: логика + события + отрисовка. */
+function tick(dt) {
   input.update(dt);
   game.update(dt);
 
@@ -181,7 +179,12 @@ function frame(now) {
   renderer.drawHold(game);
   renderer.drawNext(game);
   updateHud();
+}
 
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+  tick(dt);
   requestAnimationFrame(frame);
 }
 
@@ -231,6 +234,6 @@ renderer.drawNext(game);
 showOverlay('ready');
 
 // Доступ к игре из консоли — удобно для отладки и автотестов.
-window.__neonTetris = { game, renderer, input };
+window.__neonTetris = { game, renderer, input, tick };
 
 requestAnimationFrame(frame);
