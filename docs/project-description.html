@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Neon Tetris — описание проекта</title>
+<style>
+  @page { size: A4; margin: 0; }
+
+  * { box-sizing: border-box; }
+
+  :root {
+    --bg: #07070f;
+    --ink: #ececf8;
+    --muted: #9aa0bd;
+    --dim: #6f7390;
+    --purple: #a855f7;
+    --violet: #c084fc;
+    --cyan: #22d3ee;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --line: rgba(168, 85, 247, .22);
+    --line-cyan: rgba(34, 211, 238, .22);
+    --card: rgba(255, 255, 255, .035);
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+
+  body {
+    font-family: "Segoe UI", "Inter", Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.45;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    padding: 15mm 16mm 16mm;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    background:
+      radial-gradient(900px 520px at 6% -6%, rgba(168, 85, 247, .22), transparent 62%),
+      radial-gradient(760px 460px at 104% 8%, rgba(34, 211, 238, .14), transparent 62%),
+      radial-gradient(700px 520px at 48% 114%, rgba(34, 211, 238, .07), transparent 62%),
+      #07070f;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+
+  /* ---------- Общие элементы ---------- */
+
+  .page-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6mm;
+    padding-bottom: 3mm;
+    margin-bottom: 7mm;
+    border-bottom: 0.35mm solid var(--line);
+  }
+
+  .kicker {
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+
+  .head-note {
+    font-size: 7.5pt;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  h2 {
+    margin: 0 0 4mm;
+    font-size: 21pt;
+    font-weight: 800;
+    letter-spacing: .01em;
+    color: #fff;
+  }
+
+  h2 .accent { color: var(--violet); }
+
+  h3 {
+    margin: 0 0 2mm;
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  p { margin: 0 0 3mm; }
+
+  .lead {
+    font-size: 12pt;
+    line-height: 1.55;
+    color: #dfe3f6;
+    margin-bottom: 6mm;
+  }
+  .lead b { color: #fff; }
+
+  .muted { color: var(--muted); }
+  .small { font-size: 8.5pt; }
+
+  .page-foot {
+    position: absolute;
+    left: 16mm;
+    right: 16mm;
+    bottom: 8mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.5pt;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .page-foot b { color: var(--muted); font-weight: 600; }
+
+  /* ---------- Обложка ---------- */
+
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .cover-top { padding-top: 4mm; }
+
+  .eyebrow {
+    font-size: 8pt;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 8mm;
+  }
+
+  .logo-xl {
+    margin: 0;
+    font-size: 45pt;
+    line-height: .98;
+    font-weight: 900;
+    letter-spacing: .035em;
+  }
+  .logo-xl .neon { color: var(--violet); text-shadow: 0 0 14px rgba(168, 85, 247, .65), 0 0 34px rgba(168, 85, 247, .25); }
+  .logo-xl .tetris { color: var(--cyan); text-shadow: 0 0 14px rgba(34, 211, 238, .55), 0 0 34px rgba(34, 211, 238, .2); }
+
+  .cover-tagline {
+    margin: 4mm 0 6mm;
+    font-size: 12.5pt;
+    color: #c9cfe8;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 2.5mm; }
+
+  .chip {
+    padding: 1.6mm 3.4mm;
+    border: 0.3mm solid rgba(34, 211, 238, .32);
+    border-radius: 999px;
+    background: rgba(34, 211, 238, .06);
+    font-size: 8.5pt;
+    color: #c9d2ee;
+  }
+  .chip--violet {
+    border-color: rgba(168, 85, 247, .38);
+    background: rgba(168, 85, 247, .08);
+  }
+
+  .cover-shot-wrap { margin: 7mm 0 0; }
+
+  .shot {
+    display: block;
+    width: 100%;
+    border-radius: 4mm;
+    border: 0.35mm solid rgba(168, 85, 247, .35);
+    box-shadow: 0 0 12mm rgba(168, 85, 247, .2);
+  }
+
+  .shot--inset { width: 150mm; margin: 0 auto; }
+
+  .caption {
+    margin-top: 2.5mm;
+    font-size: 8pt;
+    color: var(--dim);
+    text-align: center;
+  }
+
+  .cover-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10mm;
+    padding-top: 6mm;
+    border-top: 0.35mm solid var(--line);
+  }
+
+  .cover-bottom p { margin: 0; max-width: 118mm; color: #b9c0da; font-size: 9.5pt; }
+
+  .cover-meta {
+    text-align: right;
+    font-size: 8pt;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    line-height: 1.9;
+  }
+
+  /* ---------- Карточки и сетки ---------- */
+
+  .split {
+    display: grid;
+    grid-template-columns: 1.25fr .75fr;
+    gap: 6mm;
+    align-items: start;
+    margin-bottom: 5mm;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.6mm;
+  }
+
+  .fact {
+    padding: 3mm 3.2mm;
+    border: 0.3mm solid var(--line);
+    border-radius: 3mm;
+    background: var(--card);
+  }
+  .fact b {
+    display: block;
+    font-size: 15pt;
+    line-height: 1.1;
+    color: var(--cyan);
+  }
+  .fact span {
+    display: block;
+    margin-top: 1mm;
+    font-size: 8pt;
+    color: var(--muted);
+  }
+
+  .bullets { list-style: none; margin: 0; padding: 0; }
+  .bullets li {
+    position: relative;
+    padding-left: 5mm;
+    margin-bottom: 2.8mm;
+    color: #b9c0da;
+    font-size: 9.5pt;
+  }
+  .bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.7mm;
+    width: 2.2mm;
+    height: 2.2mm;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    box-shadow: 0 0 2mm rgba(34, 211, 238, .5);
+  }
+  .bullets b { color: #fff; }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3.5mm;
+  }
+
+  .card {
+    padding: 4mm;
+    border: 0.3mm solid var(--line);
+    border-radius: 3mm;
+    background: var(--card);
+  }
+  .card h3 { margin-bottom: 1.8mm; }
+  .card p { margin: 0; font-size: 9pt; color: #b9c0da; }
+
+  .card-num {
+    display: inline-block;
+    margin-bottom: 2mm;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: .16em;
+    color: var(--cyan);
+  }
+
+  /* ---------- Таблицы ---------- */
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+  }
+  th, td {
+    padding: 2.4mm 2.5mm;
+    text-align: left;
+    border-bottom: 0.25mm solid rgba(255, 255, 255, .07);
+    vertical-align: top;
+  }
+  th {
+    font-size: 7.5pt;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    font-weight: 600;
+  }
+  td:last-child { text-align: right; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+
+  .modules td:first-child {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9pt;
+    color: var(--cyan);
+    white-space: nowrap;
+  }
+  .modules td:nth-child(2) { width: 100%; }
+
+  kbd {
+    display: inline-block;
+    padding: .7mm 1.7mm;
+    border: 0.25mm solid rgba(255, 255, 255, .16);
+    border-radius: 1.2mm;
+    background: rgba(255, 255, 255, .06);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8.5pt;
+    color: #e6e9f8;
+  }
+
+  /* ---------- Схема и код ---------- */
+
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 2mm;
+    margin: 3mm 0 6mm;
+  }
+
+  .flow-box {
+    flex: 1;
+    padding: 3.2mm 2mm;
+    border: 0.3mm solid var(--line-cyan);
+    border-radius: 2.5mm;
+    background: rgba(34, 211, 238, .05);
+    text-align: center;
+    font-size: 8pt;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+  .flow-box b {
+    display: block;
+    margin-bottom: .8mm;
+    font-size: 9pt;
+    color: #fff;
+  }
+
+  .flow-arrow {
+    align-self: center;
+    color: var(--cyan);
+    font-size: 15pt;
+    line-height: 1;
+  }
+
+  pre {
+    margin: 0;
+    padding: 4mm 4.5mm;
+    border: 0.3mm solid rgba(34, 211, 238, .18);
+    border-radius: 2.5mm;
+    background: rgba(0, 0, 0, .34);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8pt;
+    line-height: 1.55;
+    color: #c8d4f0;
+    white-space: pre-wrap;
+  }
+  pre .c { color: #707b9f; }
+  pre .k { color: var(--violet); }
+  pre .s { color: #7dd3fc; }
+
+  .note {
+    margin-top: 4mm;
+    padding: 4mm 4.5mm;
+    border-left: 1mm solid var(--cyan);
+    border-radius: 0 2.5mm 2.5mm 0;
+    background: rgba(34, 211, 238, .05);
+    font-size: 9pt;
+    color: #c3cbe6;
+  }
+  .note b { color: #fff; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6mm;
+    align-items: start;
+  }
+
+  .link {
+    color: var(--cyan);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9.5pt;
+  }
+
+  .tag {
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+
+  .divider {
+    height: 0.3mm;
+    margin: 5mm 0;
+    background: linear-gradient(90deg, rgba(168, 85, 247, .45), rgba(34, 211, 238, .35), transparent);
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= СТРАНИЦА 1 · ОБЛОЖКА ================= -->
+<section class="page cover">
+  <div class="cover-top">
+    <div class="eyebrow">Описание проекта · портфолио · 2026</div>
+    <h1 class="logo-xl"><span class="neon">NEON</span><span class="tetris">TETRIS</span></h1>
+    <p class="cover-tagline">Браузерный тетрис на чистом JavaScript — без фреймворков, зависимостей и сборки.</p>
+    <div class="chips">
+      <span class="chip chip--violet">0 npm-зависимостей</span>
+      <span class="chip">Canvas 2D</span>
+      <span class="chip">SRS + 7-bag</span>
+      <span class="chip chip--violet">Node.js · Vercel</span>
+    </div>
+    <div class="cover-shot-wrap">
+      <img class="shot" src="screenshots/start-screen.png" alt="Стартовый экран Neon Tetris" />
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <p>Полноценная реализация классического тетриса по Tetris Guideline: SRS-повороты с кик-оффсетами, hold, ghost-фигура, lock delay, T-spin, back-to-back и комбо. Клавиатура и тач-управление, локальный рекорд, статический деплой.</p>
+    <div class="cover-meta">
+      JavaScript · Canvas 2D<br />
+      Node.js 18+ · Vercel
+    </div>
+  </div>
+
+  <div class="page-foot">
+    <span><b>Neon Tetris</b> · описание проекта</span>
+    <span>01 / 05</span>
+  </div>
+</section>
+
+<!-- ================= СТРАНИЦА 2 · О ПРОЕКТЕ ================= -->
+<section class="page">
+  <div class="page-head">
+    <span class="kicker">01 · О проекте</span>
+    <span class="head-note">Neon Tetris · портфолио</span>
+  </div>
+
+  <h2>Тетрис, который <span class="accent">работает целиком в браузере</span></h2>
+
+  <p class="lead">
+    Neon Tetris — играбельный браузерный тетрис, собранный по рекомендациям
+    Tetris Guideline. <b>Игровая логика отделена от DOM</b>, рендер работает на Canvas 2D,
+    а проект обходится без единой npm-зависимости — включая тесты и локальный dev-сервер.
+  </p>
+
+  <div class="split">
+    <div>
+      <h3>Что демонстрирует проект</h3>
+      <ul class="bullets">
+        <li><b>Игровая логика:</b> движение, вращение, коллизии, очистка линий, уровни и подсчёт очков.</li>
+        <li><b>Canvas-рендеринг:</b> неоновая графика, ghost-фигура, анимации и DPR-aware canvas.</li>
+        <li><b>Управление:</b> клавиатура с DAS/ARR, экранные кнопки и свайпы на тач-экранах.</li>
+        <li><b>Инфраструктура:</b> dev-сервер на <code>node:http</code>, тесты на <code>node:test</code>, статика на Vercel.</li>
+      </ul>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>0</b><span>npm-зависимостей</span></div>
+      <div class="fact"><b>11</b><span>юнит-тестов ядра</span></div>
+      <div class="fact"><b>10×20</b><span>игровое поле</span></div>
+      <div class="fact"><b>5</b><span>фигур в очереди</span></div>
+      <div class="fact"><b>500 мс</b><span>lock delay</span></div>
+      <div class="fact"><b>60 FPS</b><span>игровой цикл</span></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="shot--inset">
+    <img class="shot" src="screenshots/gameplay.png" alt="Игровой процесс Neon Tetris" />
+    <div class="caption">Игровой процесс: поле 10×20, HUD, hold, очередь из пяти фигур и ghost-подсказка.</div>
+  </div>
+
+  <div class="page-foot">
+    <span><b>Neon Tetris</b> · описание проекта</span>
+    <span>02 / 05</span>
+  </div>
+</section>
+
+<!-- ================= СТРАНИЦА 3 · МЕХАНИКИ ================= -->
+<section class="page">
+  <div class="page-head">
+    <span class="kicker">02 · Механики и управление</span>
+    <span class="head-note">Tetris Guideline</span>
+  </div>
+
+  <h2>Классические правила — <span class="accent">в современной реализации</span></h2>
+
+  <div class="grid-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>SRS-повороты</h3>
+      <p>Полные таблицы кик-оффсетов для JLSTZ и I, отдельное поведение O. Повороты у стен и в тесных колодцах работают предсказуемо.</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>Генератор 7-bag</h3>
+      <p>Каждая из семи фигур выпадает ровно один раз за «мешок». Очередь показывает пять следующих фигур — можно планировать заранее.</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>Hold и ghost</h3>
+      <p>Отложенную фигуру можно вернуть, но не раньше фиксации текущей. Ghost-подсказка показывает точную позицию приземления.</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>Lock delay</h3>
+      <p>500 мс на фиксацию фигуры и до 15 сбросов таймера при движении или повороте — привычное ощущение управления.</p>
+    </div>
+    <div class="card">
+      <span class="card-num">05</span>
+      <h3>Очки</h3>
+      <p>Линии 100 / 300 / 500 / 800 × уровень, T-spin и mini T-spin, back-to-back ×1.5, комбо +50 × серия × уровень.</p>
+    </div>
+    <div class="card">
+      <span class="card-num">06</span>
+      <h3>Уровни и гравитация</h3>
+      <p>Новый уровень каждые 10 линий. Скорость падения растёт по формуле, soft drop ускоряет в 20 раз.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h3>Клавиатура</h3>
+      <table>
+        <tr><th>Действие</th><th>Клавиши</th></tr>
+        <tr><td>Сдвиг влево / вправо</td><td><kbd>←</kbd> <kbd>→</kbd></td></tr>
+        <tr><td>Поворот по / против часовой</td><td><kbd>↑</kbd> <kbd>X</kbd> / <kbd>Z</kbd> <kbd>Ctrl</kbd></td></tr>
+        <tr><td>Мгновенный сброс</td><td><kbd>Space</kbd></td></tr>
+        <tr><td>Мягкий сброс</td><td><kbd>↓</kbd></td></tr>
+        <tr><td>Запас фигуры</td><td><kbd>C</kbd> <kbd>Shift</kbd></td></tr>
+        <tr><td>Пауза</td><td><kbd>P</kbd> <kbd>Esc</kbd></td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Тач-экран и надёжность</h3>
+      <p class="small muted">На телефоне под полем появляются кнопки, а по самому полю работают свайпы:</p>
+      <ul class="bullets">
+        <li>свайп влево / вправо — сдвиг фигуры;</li>
+        <li>свайп вниз — мгновенный сброс;</li>
+        <li>тап или свайп вверх — поворот.</li>
+      </ul>
+      <div class="note">
+        <b>Фокус и видимость.</b> При потере фокуса окна или переключении вкладки игра автоматически ставится на паузу.
+        Рекорд хранится в <code>localStorage</code> и переживает перезапуск браузера.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-foot">
+    <span><b>Neon Tetris</b> · описание проекта</span>
+    <span>03 / 05</span>
+  </div>
+</section>
+
+<!-- ================= СТРАНИЦА 4 · АРХИТЕКТУРА ================= -->
+<section class="page">
+  <div class="page-head">
+    <span class="kicker">03 · Архитектура</span>
+    <span class="head-note">Ванильный JavaScript · ES-модули</span>
+  </div>
+
+  <h2>Движок не знает о DOM — <span class="accent">и это главное решение</span></h2>
+
+  <p class="lead">
+    <b>Tetris</b> управляет состоянием партии и генерирует события, а рендер, HUD и оверлеи
+    подписываются на них. Логику можно тестировать в Node.js без браузера.
+  </p>
+
+  <table class="modules">
+    <tr><th>Модуль</th><th>Ответственность</th></tr>
+    <tr><td>pieces.js</td><td>Фигуры, SRS-состояния, кик-оффсеты, генератор 7-bag.</td></tr>
+    <tr><td>engine.js</td><td>Состояние партии, движение, коллизии, очистка линий, очки, события.</td></tr>
+    <tr><td>renderer.js</td><td>Canvas 2D: поле, ghost, hold, очередь, анимации, пульсация опасной высоты.</td></tr>
+    <tr><td>input.js</td><td>Клавиатура с DAS/ARR, тач-кнопки и свайпы, пауза при потере фокуса.</td></tr>
+    <tr><td>storage.js</td><td>Рекорд в <code>localStorage</code> с безопасным фолбэком при исключениях.</td></tr>
+    <tr><td>main.js</td><td>Игровой цикл, HUD, оверлеи, тосты, сохранение рекорда.</td></tr>
+  </table>
+
+  <div class="flow">
+    <div class="flow-box"><b>Input</b>клавиатура<br />тач</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><b>Tetris Engine</b>состояние<br />и правила</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><b>События</b>scored · levelup<br />clear · gameover</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><b>UI</b>Renderer<br />HUD · оверлеи</div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>Инженерные решения</h3>
+      <ul class="bullets">
+        <li><b>Двойные координаты.</b> Позиции хранятся ×2 — так корректно работают полуцелые центры вращения SRS.</li>
+        <li><b>Ограничение шага.</b> <code>dt</code> не больше 50 мс, циклы гравитации защищены guard-счётчиком от «спирали смерти».</li>
+        <li><b>DPR не выше 2.</b> Canvas пересчитывается через <code>ResizeObserver</code> без лишней нагрузки.</li>
+        <li><b>Безопасное хранилище.</b> Чтение и запись рекорда обёрнуты в <code>try/catch</code>.</li>
+        <li><b>Ноль зависимостей.</b> ES-модули, <code>node:http</code> и <code>node:test</code> — только стандартная библиотека.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Игровой цикл</h3>
+      <pre><span class="c">// main.js · один кадр</span>
+<span class="k">function</span> frame(now) {
+  <span class="k">const</span> dt = Math.min(
+    0.05,
+    (now - lastTime) / 1000
+  );
+  input.update(dt);   <span class="c">// DAS / ARR</span>
+  game.update(dt);    <span class="c">// гравитация</span>
+  <span class="k">for</span> (<span class="k">const</span> e <span class="k">of</span>
+       game.drainEvents()) {
+    handle(e);        <span class="c">// HUD, тосты</span>
+  }
+  renderer.draw(game, dt);
+  requestAnimationFrame(frame);
+}</pre>
+      <p class="caption" style="text-align:left; margin-top:2mm;">Порядок шагов фиксирован: ввод → логика → события → рендер.</p>
+    </div>
+  </div>
+
+  <div class="page-foot">
+    <span><b>Neon Tetris</b> · описание проекта</span>
+    <span>04 / 05</span>
+  </div>
+</section>
+
+<!-- ================= СТРАНИЦА 5 · КАЧЕСТВО И ЗАПУСК ================= -->
+<section class="page">
+  <div class="page-head">
+    <span class="kicker">04 · Качество, запуск, деплой</span>
+    <span class="head-note">Node.js 18+ · Vercel</span>
+  </div>
+
+  <h2>Проверяемо, воспроизводимо, <span class="accent">без установки зависимостей</span></h2>
+
+  <div class="two-col">
+    <div>
+      <h3>Тестирование</h3>
+      <p class="small muted">11 юнит-тестов на встроенном <code>node:test</code> покрывают ключевые правила:</p>
+      <ul class="bullets">
+        <li>7-bag: каждая фигура ровно один раз за мешок;</li>
+        <li>целочисленность координат всех фигур и поворотов;</li>
+        <li>повороты и кик-оффсеты у стен;</li>
+        <li>очистка линий, тетрис и рост уровня;</li>
+        <li>hold, ghost-позиция, game over.</li>
+      </ul>
+      <div class="note" style="margin-top:2mm;">
+        <b>Результат:</b> 11 тестов проходят — <span class="link">11 pass / 0 fail</span>.
+      </div>
+    </div>
+    <div>
+      <h3>Локальный запуск</h3>
+      <pre><span class="c"># dev-сервер на node:http</span>
+npm run dev
+<span class="c"># http://localhost:3000</span>
+
+<span class="c"># юнит-тесты игрового ядра</span>
+npm test</pre>
+      <p class="caption" style="text-align:left; margin-top:2mm;">Зависимостей нет — <code>npm install</code> не требуется.</p>
+
+      <h3 style="margin-top:5mm;">Деплой на Vercel</h3>
+      <ul class="bullets">
+        <li><b>Статика без сборки:</b> Vercel отдаёт корень проекта как есть.</li>
+        <li><code>cleanUrls</code>, <code>trailingSlash: false</code>, кэш для <code>/assets/*</code>.</li>
+        <li>Автодеплой при пуше в <code>main</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h3>Структура проекта</h3>
+      <pre>adil/
+├─ index.html
+├─ server.mjs
+├─ vercel.json
+├─ src/
+│  ├─ styles.css
+│  └─ js/
+│     ├─ pieces.js   engine.js
+│     ├─ renderer.js input.js
+│     └─ storage.js  main.js
+└─ tests/
+   └─ engine.test.mjs</pre>
+    </div>
+    <div>
+      <h3>Что в итоге</h3>
+      <p class="small muted">Проект показывает полный цикл разработки небольшой игры: от игровых правил и рендера до тестов, dev-инфраструктуры и статического деплоя.</p>
+      <ul class="bullets">
+        <li><b>Читаемая архитектура:</b> шесть модулей с чёткими ролями.</li>
+        <li><b>Нулевые зависимости:</b> минимум рисков и мгновенный старт.</li>
+        <li><b>Играбельный результат:</b> клавиатура, тач, рекорды, адаптивный UI.</li>
+      </ul>
+      <div class="note">
+        <span class="tag">Репозиторий</span><br />
+        <span class="link">github.com/adilmukanov06-ai/neon-tetris</span><br />
+        <span class="small muted">Лицензия MIT · статический деплой на Vercel</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-foot">
+    <span><b>Neon Tetris</b> · описание проекта</span>
+    <span>05 / 05</span>
+  </div>
+</section>
+
+</body>
+</html>

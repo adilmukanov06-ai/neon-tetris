@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gitattributes
+.github
+node_modules
+tests
+tools
+docs
+PLAN.md
+AGENTS.md
+README.md
+server.mjs
+package.json
+package-lock.json
+.vercel

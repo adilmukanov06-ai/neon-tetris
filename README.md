@@ -5,6 +5,8 @@
 
 ![стек](https://img.shields.io/badge/stack-vanilla%20JS-a855f7) ![deps](https://img.shields.io/badge/dependencies-0-22d3ee) ![license](https://img.shields.io/badge/license-MIT-64748b)
 
+![Стартовый экран](docs/screenshots/start-screen.jpeg)
+
 ## Возможности
 
 - Полноценная механика по **Tetris Guideline**: SRS-поворот с кик-оффсетами (включая отдельную таблицу для I), генератор **7-bag**, **hold**, очередь из 5 фигур, **ghost-подсказка**.
